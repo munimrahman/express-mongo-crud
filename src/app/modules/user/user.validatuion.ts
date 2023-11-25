@@ -12,7 +12,7 @@ const OrderSchema = z.object({
   quantity: z.number().min(1, { message: 'Quantity must be at least 1' }),
 });
 
-const UserSchema = z.object({
+const UserValidationSchema = z.object({
   userId: z
     .number()
     .positive({ message: 'User ID must be a positive integer' }),
@@ -32,4 +32,4 @@ const UserSchema = z.object({
   orders: z.array(OrderSchema),
 });
 
-export default UserSchema;
+export default UserValidationSchema;
