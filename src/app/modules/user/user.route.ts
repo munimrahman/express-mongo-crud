@@ -16,10 +16,16 @@ const router = express.Router();
 */
 
 router
-  .post('/', UserControllers.createUser)
-  .get('/', UserControllers.getAllUsers)
-  .get('/:userId', () => {})
-  .put('/:userId', () => {})
-  .delete('/:userId', () => {});
+  .post('/', UserControllers.createUser) // create user
+  .get('/', UserControllers.getAllUsers) // get all user
+  .get('/:userId', UserControllers.getUserById) // get user by id
+  .get('/:userId/orders', UserControllers.getAllOrdersFromUserId) // get all orders
+  .get(
+    '/:userId/orders/total-price',
+    UserControllers.calculateTotalPriceForUser,
+  ) // get total price
+  .put('/:userId', UserControllers.updateUser) // update user
+  .put('/:userId/orders', UserControllers.addProductToUser) // add new product to order
+  .delete('/:userId', UserControllers.deleteUserById); // delete user
 
 export const UserRoutes = router;

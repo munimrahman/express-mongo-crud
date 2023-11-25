@@ -1,28 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import { Request, Response } from 'express';
 // import httpStatus from 'http-status';
 // import sendResponse from '../../utils/sendResponse';
 import { UserServices } from './user.service';
-
-/* 
-    /api/users --> create user
-    /api/users --> get all users
-    /api/users/:userId --> get user by id
-    /api/users/:userId --> update user
-    /api/users/:userId --> delete user
-    // bonus
-    /api/users/:userId/orders --> add new product
-    /api/users/:userId/orders --> get all orders for a user
-    /api/users/:userId/orders/total-price --> calculate total price for a user
-*/
+import UserValidationSchema from './user.validatuion';
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.createUser(req.body);
+    const data = UserValidationSchema.parse(req.body);
+
+    const result = await UserServices.createUser(data);
+
+    const { password: pwd, ...others } = result.toObject();
 
     res.status(200).send({
       success: true,
       message: 'Successfully Created User',
-      data: result,
+      data: others,
     });
   } catch (err) {
     res.status(500).send({
@@ -68,6 +63,7 @@ const getUserById = async (req: Request, res: Response) => {
     });
   }
 };
+
 const updateUser = async (req: Request, res: Response) => {
   try {
     const result = await UserServices.createUser(req.body);

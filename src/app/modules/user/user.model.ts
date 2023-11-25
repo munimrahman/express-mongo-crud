@@ -1,17 +1,22 @@
 import mongoose, { Schema } from 'mongoose';
 import { IAddress, IOrder, IUser } from './user.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
-const AddressSchema = new Schema<IAddress>({
-  street: {
-    type: String,
+const AddressSchema = new Schema<IAddress>(
+  {
+    street: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
   },
-  city: {
-    type: String,
-  },
-  country: {
-    type: String,
-  },
-});
+  { _id: false },
+);
 
 const OrderSchema = new Schema<IOrder>({
   productName: {
@@ -70,6 +75,17 @@ const UserSchema = new Schema<IUser>({
   orders: {
     type: [OrderSchema],
   },
+});
+
+UserSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
 });
 
 const User = mongoose.model<IUser>('User', UserSchema);

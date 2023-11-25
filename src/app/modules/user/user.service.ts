@@ -1,18 +1,6 @@
 import { IOrder, IUser } from './user.interface';
 import User from './user.model';
 
-/* 
-    /api/users --> create user
-    /api/users --> get all users
-    /api/users/:userId --> get user by id
-    /api/users/:userId --> update user
-    /api/users/:userId --> delete user
-    // bonus
-    /api/users/:userId/orders --> add new product
-    /api/users/:userId/orders --> get all orders for a user
-    /api/users/:userId/orders/total-price --> calculate total price for a user
-*/
-
 const createUser = async (data: IUser) => {
   const result = await User.create(data);
   return result;
