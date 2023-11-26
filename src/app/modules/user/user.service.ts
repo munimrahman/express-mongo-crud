@@ -14,7 +14,7 @@ const getAllUsers = async () => {
 };
 
 const getUserById = async (userId: number) => {
-  const result = await User.findOne({ userId: userId });
+  const result = await User.findOne({ userId: userId }).select('-password');
   return result;
 };
 
@@ -24,9 +24,10 @@ const getUserByUsername = async (username: string) => {
 };
 
 const updateUser = async ({ data, id }: { data: IUser; id: number }) => {
-  const result = await User.updateOne({ userId: id }, data, {
+  const result = await User.findOneAndUpdate({ userId: id }, data, {
     new: true,
     runValidators: true,
+    select: '-password',
   });
   return result;
 };

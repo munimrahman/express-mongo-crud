@@ -84,57 +84,107 @@ const getAllUsers = async (req: Request, res: Response) => {
 const getUserById = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
+
     const isUserExists = await User.isUserExists(userId);
-    console.log(isUserExists);
+    if (!isUserExists) {
+      res.status(404).send({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+      return;
+    }
 
     const result = await UserServices.getUserById(Number(userId));
 
     res.status(200).send({
       success: true,
-      message: 'Successfully Created User',
+      message: 'User fetched successfully!',
       data: result,
     });
   } catch (err) {
-    res.status(500).send({
+    res.status(404).send({
       success: false,
-      message: 'Successfully Get Data',
-      data: err,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: err,
+      },
     });
   }
 };
 
 const updateUser = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.createUser(req.body);
+    // check if user exists
+    const { userId } = req.params;
+    const isUserExists = await User.isUserExists(userId);
+    if (!isUserExists) {
+      res.status(404).send({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+      return;
+    }
+
+    const result = await UserServices.updateUser({
+      data: req.body,
+      id: Number(userId),
+    });
 
     res.status(200).send({
       success: true,
-      message: 'Successfully Created User',
+      message: 'User updated successfully!',
       data: result,
     });
   } catch (err) {
     res.status(500).send({
       success: false,
-      message: 'Successfully Get Data',
-      data: err,
+      message: 'Can not update user.',
+      error: {
+        code: 500,
+        description: err,
+      },
     });
   }
 };
 
 const deleteUserById = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.createUser(req.body);
+    // check if user exists
+    const { userId } = req.params;
+    const isUserExists = await User.isUserExists(userId);
+    if (!isUserExists) {
+      res.status(404).send({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+      return;
+    }
+
+    const result = await UserServices.deleteUser(Number(req.params.userId));
 
     res.status(200).send({
       success: true,
-      message: 'Successfully Created User',
-      data: result,
+      message: 'User deleted successfully!',
+      data: null,
     });
   } catch (err) {
     res.status(500).send({
       success: false,
-      message: 'Successfully Get Data',
-      data: err,
+      message: 'Cannot delete user.',
+      error: err,
     });
   }
 };
