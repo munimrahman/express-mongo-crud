@@ -262,12 +262,31 @@ const getAllOrdersFromUserId = async (req: Request, res: Response) => {
 
 const calculateTotalPriceForUser = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.createUser(req.body);
+    // check if user exists
+    const { userId } = req.params;
+    const isUserExists = await User.isUserExists(userId);
+    if (!isUserExists) {
+      res.status(404).send({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+      return;
+    }
+
+    const result = await UserServices.calculateTotalPriceOfSpecificUSer(
+      Number(req.params.userId),
+    );
 
     res.status(200).send({
       success: true,
-      message: 'Successfully Created User',
-      data: result,
+      message: 'Total price calculated successfully!',
+      data: {
+        totalPrice: 0,
+      },
     });
   } catch (err) {
     res.status(500).send({

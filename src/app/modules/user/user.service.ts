@@ -58,7 +58,24 @@ const getAllOrdersByUserId = async (userId: number) => {
 };
 
 const calculateTotalPriceOfSpecificUSer = async (userId: number) => {
-  return `Tottal price for ${userId}`;
+  const total = await User.aggregate([
+    { $match: { userId } },
+    {
+      $project: {
+        total: {
+          $sum: {
+            $map: {
+              input: '$orders',
+              as: 'order',
+              in: { $multiply: ['$$order.quantity', '$$order.price'] },
+            },
+          },
+        },
+      },
+    },
+  ]);
+
+  return total[0]?.total || 0;
 };
 
 export const UserServices = {
