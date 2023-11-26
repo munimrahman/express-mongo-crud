@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 // import sendResponse from '../../utils/sendResponse';
 import { UserServices } from './user.service';
 import UserValidationSchema from './user.validatuion';
+import User from './user.model';
 
 const createUser = async (req: Request, res: Response) => {
   try {
@@ -82,7 +83,11 @@ const getAllUsers = async (req: Request, res: Response) => {
 
 const getUserById = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.createUser(req.body);
+    const { userId } = req.params;
+    const isUserExists = await User.isUserExists(userId);
+    console.log(isUserExists);
+
+    const result = await UserServices.getUserById(Number(userId));
 
     res.status(200).send({
       success: true,

@@ -1,5 +1,6 @@
-import mongoose, { Schema } from 'mongoose';
-import { IAddress, IOrder, IUser } from './user.interface';
+/* eslint-disable @typescript-eslint/ban-types */
+import { Schema, model } from 'mongoose';
+import { IAddress, IOrder, IUser, UserModel } from './user.interface';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 
@@ -33,7 +34,7 @@ const OrderSchema = new Schema<IOrder>({
   },
 });
 
-const UserSchema = new Schema<IUser>({
+const userSchema = new Schema<IUser>({
   userId: {
     type: Number,
     required: true,
@@ -77,7 +78,7 @@ const UserSchema = new Schema<IUser>({
   },
 });
 
-UserSchema.pre('save', async function (next) {
+userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this;
 
@@ -88,6 +89,11 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
-const User = mongoose.model<IUser>('User', UserSchema);
+userSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await User.findOne({ userId: id });
+  return !!existingUser;
+};
+
+const User = model<IUser, UserModel>('User', userSchema);
 
 export default User;
