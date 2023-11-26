@@ -7,12 +7,19 @@ const createUser = async (data: IUser) => {
 };
 
 const getAllUsers = async () => {
-  const result = await User.find();
+  const result = await User.find({}).select(
+    'username fullName email age address -_id',
+  );
   return result;
 };
 
 const getUserById = async (userId: number) => {
   const result = await User.findOne({ userId: userId });
+  return result;
+};
+
+const getUserByUsername = async (username: string) => {
+  const result = await User.findOne({ username: username });
   return result;
 };
 
@@ -51,6 +58,7 @@ export const UserServices = {
   createUser,
   getAllUsers,
   getUserById,
+  getUserByUsername,
   updateUser,
   deleteUser,
   addProductToSpecificUser,
