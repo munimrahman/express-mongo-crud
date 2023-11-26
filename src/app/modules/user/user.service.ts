@@ -44,11 +44,17 @@ const addProductToSpecificUser = async ({
   productData: IOrder;
   userId: number;
 }) => {
-  return { productData, userId };
+  const res = await User.findOneAndUpdate(
+    { userId },
+    { $push: { orders: productData } },
+    { new: true, runValidators: true, select: '-password' },
+  );
+  return res;
 };
 
 const getAllOrdersByUserId = async (userId: number) => {
-  return `All orders for ${userId}`;
+  const result = await User.findOne({ userId: userId }).select('orders -_id');
+  return result;
 };
 
 const calculateTotalPriceOfSpecificUSer = async (userId: number) => {

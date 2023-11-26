@@ -191,36 +191,71 @@ const deleteUserById = async (req: Request, res: Response) => {
 
 const addProductToUser = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.createUser(req.body);
+    // check if user exists
+    const { userId } = req.params;
+    const isUserExists = await User.isUserExists(userId);
+    if (!isUserExists) {
+      res.status(404).send({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+      return;
+    }
+
+    const result = await UserServices.addProductToSpecificUser({
+      productData: req.body,
+      userId: Number(req.params.userId),
+    });
 
     res.status(200).send({
       success: true,
-      message: 'Successfully Created User',
-      data: result,
+      message: 'Order created successfully!',
+      data: null,
     });
   } catch (err) {
     res.status(500).send({
       success: false,
-      message: 'Successfully Get Data',
-      data: err,
+      message: 'Can not create order',
+      error: err,
     });
   }
 };
 
 const getAllOrdersFromUserId = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.createUser(req.body);
+    // check if user exists
+    const { userId } = req.params;
+    const isUserExists = await User.isUserExists(userId);
+    if (!isUserExists) {
+      res.status(404).send({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+      return;
+    }
+
+    const result = await UserServices.getAllOrdersByUserId(
+      Number(req.params.userId),
+    );
 
     res.status(200).send({
       success: true,
-      message: 'Successfully Created User',
+      message: 'Order fetched successfully!',
       data: result,
     });
   } catch (err) {
     res.status(500).send({
       success: false,
-      message: 'Successfully Get Data',
-      data: err,
+      message: 'Can not fetched order data.',
+      error: err,
     });
   }
 };
