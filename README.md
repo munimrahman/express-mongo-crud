@@ -5,7 +5,7 @@ This project is a Node.js application built with TypeScript and Mongoose. It pro
 Follow these instructions to get the project up and running on your local machine.
 
 ####Prerequisites
-Before you start, make sure you have the following installed:
+Before you start, make sure you have the following install:
 
 Node.js (https://nodejs.org/)
 MongoDB (https://www.mongodb.com/try/download/community)
